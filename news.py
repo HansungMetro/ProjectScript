@@ -94,3 +94,6 @@ def NC_PrintNews(numNews): #기사 출력 numNews:출력 기사 갯수(최대8)
         print(i.text)
     
     print("───────────────────────────────────────────")
+    
+if __name__ == '__main__':
+    NC_PrintNews(8)
