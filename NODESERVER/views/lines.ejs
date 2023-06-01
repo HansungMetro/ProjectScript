@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Hansung Metro</title>
+  </head>
+  <body class = "d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Hansung Metro</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">지하철 정보제공 서비스</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">임시</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+    <div class="row">
+    <div class="col-9">
+    <div class="container mt-3">
+        <form action="/lines/result" method="POST">
+            <label>지하철 호선</label>
+            <div class="form-group">
+              <select class="form-control" name="updownLine" aria-label="Example select with button addon">
+                <option selected>상하행선 선택...</option>
+                <option value="상행">상행선</option>
+                <option value="하행">하행선</option>
+              </select>
+              <select class="form-control" name="SubwayID" aria-label="Example select with button addon">
+                  <option selected>Choose...</option>
+                  <option value="1001">1호선</option>
+                  <option value="1002">2호선</option>
+                  <option value="1003">3호선</option>
+                  <option value="1004">4호선</option>
+                  <option value="1005">5호선</option>
+                  <option value="1006">6호선</option>
+                  <option value="1007">7호선</option>
+                  <option value="1008">8호선</option>
+                  <option value="1009">9호선</option>
+              </select>
+            </div>
+            <div class="form-group  mt-3">
+                <label>출발역과 도착역 지정</label>
+                <div class="form-row">
+                    <div class="col">
+                    <input type="text" name="start" class="form-control" placeholder="한성대입구">
+                    </div>
+                    <div class="col">
+                    <input type="text" name="end" class="form-control" placeholder="길음">
+                    </div>
+                    <input type="hidden" name="trainNum" value='0'>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col">
+          <h4>출발까지 남은 시간</h4>
+          <p id="lastTime1" >남은 시간: <%= Data[0] %></p>
+        </div>
+        <div class="col">
+          <h4>도착까지 남은 시간</h4>
+          <p id="lastTime2">남은 시간: <%= Data[1] %></p>
+          <p>현재 위치: <%= Data[2] %></p>
+        </div>
+      </div>
+      
+        <form action="/lines/result" method="POST">
+          <input type="hidden" name="SubwayID" class="form-control" value=<%= Data[3] %>>
+          <input type="hidden" name="start" class="form-control" value=<%= Data[4] %>>
+          <input type="hidden" name="end" class="form-control" value=<%= Data[5] %>>
+          <input type="hidden" name="trainNum" class="form-control" value=<%= Data[6] %>>
+          <button type="submit" class="btn btn-primary float-right">새로고침</button>
+        </form>
+    </div>
+  </div>
+  <div class="col-1">
+    <div class="container">
+      <% for(let i = 0; i < News.length; i++) { %>
+        <% let d = News[i].split('\\'); %>
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title"><%= d[0] %></h5>
+            <p class="card-text"><%= d[1] %></p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+    
+
+    
+    
+
+    <input id="TIME1" type="hidden" value=<%= Data[0] %>>
+    <input id="TIME2" type="hidden" value=<%= Data[1] %>>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // EJS 템플릿에서 전달한 시작 시간 사용
+        var startTime1 = parseInt($('#TIME1').val())
+        var startTime2 = parseInt($('#TIME2').val())
+        console.log(startTime1)
+        setInterval(updateTimer, 1000);
+  
+        function updateTimer() {
+          if(startTime1 > 0) startTime1=startTime1-1;
+          if(startTime2 > 0) startTime2=startTime2-1;
+          else 
+          {
+            alert('목적지에 도착했습니다.') 
+            clearInterval(updateTimer);
+          }
+          
+          $('#lastTime1').text('남은 시간: ' + (parseInt(startTime1/60)) + '분 '+ (startTime1%60) + '초');
+          $('#lastTime2').text('남은 시간: ' + (parseInt(startTime2/60)) + '분 '+ (startTime2%60) + '초');
+          
+        }
+      });
+    </script>
+      
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
