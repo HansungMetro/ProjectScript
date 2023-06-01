@@ -31,14 +31,18 @@ def MU_GetJson(apiName, keyword):
             print("해당 데이터가 없습니다. 요청 실패")
     except:
         print("해당 데이터가 없습니다. 요청 실패")
-        return 0;
+        return 0
 
 
 def GTN_GetTrainNum(subwayId, updnLine, station):  #열차 차량번호 얻기, 필요인자: 호선정보, 상하행선 정보, 지하철역
     DATA = MU_GetJson("realtimeStationArrival", station)
-    for i in range (DATA.dataLength):
-        if(DATA.jsonData[i]["subwayId"] == subwayId and DATA.jsonData[i]["updnLine"] == updnLine):
-            return DATA.jsonData[i]["btrainNo"]
+    if(DATA!=0):
+        for i in range (DATA.dataLength):
+            if(DATA.jsonData[i]["subwayId"] == subwayId and DATA.jsonData[i]["updnLine"] == updnLine):
+                return DATA.jsonData[i]["btrainNo"]
+    else:
+        output = trainLocation(0, '잘못된 요청')  
+        return output
 
         
 def GLT_GetArrivalTime(destination, trainNum):  #도착 예정 시간 확인, 필요인자: 목적지, 리턴값: 남은 시간, 
